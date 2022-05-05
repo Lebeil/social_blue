@@ -3,7 +3,7 @@ const ObjectID = require('mongoose').Types.ObjectId;
 
 module.exports.getAllUsers = async (req, res) => {
     const users = await UserModel.find().select('-password');
-    res.status(200).json(users);
+    return res.status(200).json(users);
 }
 
 module.exports.userInfo = (req, res) => {
@@ -17,25 +17,29 @@ module.exports.userInfo = (req, res) => {
     }).select("-password")
 };
 
-module.exports.updateUser = async (req, res) => {
+module.exports.updateUser = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id)
 
+    // Ne pas mettre "async await" parce que 'ERR_HTTP_HEADERS_SENT'
+
     try {
-        await UserModel.findOneAndUpdate(
+        UserModel.findOneAndUpdate(
             {_id: req.params.id},
             {
                 $set: {
-                    bio: req.body.bio
-                }
+                    bio: req.body.bio,
+                },
             },
-            {new: true, upsert: true, setDefaultsOnInsert: true}, // paramètres obligatoire pour un put
+            {upsert: true, new: true, setDefaultsOnInsert: true}, // paramètres obligatoire pour un put
             (err, docs) => {
                 if(!err) return res.send(docs);
-                if(err) return res.status(500).send({ message: err});
+                else {
+                    return res.status(500).send({ message: err});
+                }
             }
-        )
+        );
     } catch(err) {
-        return res.status(500).json({ message: err })
+        return res.status(404).json({ message: err });
     }
-}
+};
