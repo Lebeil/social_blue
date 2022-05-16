@@ -96,6 +96,74 @@ module.exports.likePost = async (req, res)=> {
     }
 }
 
-module.exports.unlikePost = async (req, res)=> {
+module.exports.unlikePost = (req, res)=> {
+    if(!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknow : " +  req.params.id);
+
+    try {
+        // tableau de like pour l'article
+        PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $pull: { likers: req.body.id }
+            },
+            { new: true},
+            (err, docs)=> {
+                if(err) return res.status(400).send(err);
+                else return res.send(docs)
+            }
+        );
+        // tableau de like pour l'utilisateur
+        UserModel.findByIdAndUpdate(
+            req.body.id,
+            {
+                $pull: { likes: req.params.id}
+            },
+            {
+                new: true
+            },
+            (err, docs)=> {
+                if(!err) return res.status(200).send(docs);
+                else return res.status(400).send(err);
+            }
+        )
+    } catch(err) {
+        return res.status(400).send(err);
+    }
+}
+
+module.exports.commentPost = (req, res)=> {
+    if(!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknow : " +  req.params.id);
+
+    try {
+        PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {
+                    comments: {
+                        commenterId: req.body.commenterId,
+                        commenterPseudo: req.body.commenterPseudo,
+                        text: req.body.text,
+                        timestamp: new Date().getTime(),
+                    },
+                },
+            },
+            { new: true},
+            (err, docs) => {
+                if(!err) return res.send(docs);
+                else return res.status(400).send(err);
+        }
+        );
+    } catch(err) {
+        return res.status(400).send(err);
+    }
+}
+
+module.exports.editCommentPost = (req, res)=> {
+
+}
+
+module.exports.deleteCommentPost = (req, res)=> {
 
 }
