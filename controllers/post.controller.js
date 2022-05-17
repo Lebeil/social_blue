@@ -169,8 +169,8 @@ module.exports.editCommentPost = (req, res) => {
             const theComment = docs && docs.comments.find((comment) =>
                 comment._id.equals(req.body.commentId)
             )
-
             if (!theComment) return res.status(404).send("Comment not found");
+
             theComment.text = req.body.text;
 
             return docs.save((err) => {
@@ -184,5 +184,26 @@ module.exports.editCommentPost = (req, res) => {
 };
 
 module.exports.deleteCommentPost = (req, res) => {
+    if (!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknown : " + req.params.id);
 
+    try {
+        return PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $pull: {
+                    comments: {
+                        _id: req.body.commentId
+                    }
+                }
+            },
+            { new: true },
+            (err, docs)=> {
+                if(!err) return res.status(200).send(docs);
+                else return res.status(400).send(err);
+            }
+        )
+    } catch(err) {
+        return res.status(400).send(err);
+    }
 }
