@@ -1,4 +1,30 @@
-/*const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
+
+mongoose
+    .connect(
+        "mongodb+srv://" + process.env.DB_USER_PASS + "@cluster0.k5wpj.mongodb.net/social_blue?retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true"
+    )
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((err) => console.log("Failed to connect to MongoDB", err));
+
+/*
+
+const mongoose = require("mongoose");
+
+mongoose
+    .connect(
+        `mongodb+srv://${process.env.DB_USER_PASS}@cluster0.k5wpj.mongodb.net/social_blue`
+    )
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((err) => console.log("Failed to connect to MongoDB", err));
+
+*/
+
+
+// *** autre méthode *** //
+
+/*
+const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string
 const url = `mongodb+srv://${process.env.DB_USER_PASS}@cluster0.k5wpj.mongodb.net/test?retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true`;
@@ -18,15 +44,3 @@ async function run() {
 }
 
 run().catch(console.dir);*/
-
-const mongoose = require("mongoose");
-
-mongoose
-    .connect(
-        `mongodb+srv://${process.env.DB_USER_PASS}@cluster0.k5wpj.mongodb.net/social_blue`, {
-            retryWrites: true,
-            w: "majority"
-        }
-    )
-    .then(() => console.log("Connected to MongoDB"))
-    .catch((err) => console.log("Failed to connect to MongoDB", err));

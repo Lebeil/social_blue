@@ -7,7 +7,7 @@ const SignInForm = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const emailError = document.querySelector(".email.error");
+    const emailError = document.querySelector(".email .error");
     const passwordError = document.querySelector(".password.error");
 
     axios({
@@ -19,11 +19,11 @@ const SignInForm = () => {
         password,
       },
     })
-      .then((res) => {
-        console.log(res);
-        if (res.data.errors) {
-          emailError.innerHTML = res.data.errors.email;
-          passwordError.innerHTML = res.data.errors.password;
+      .then((response) => {
+        console.log(response);
+        if (response.data.errors) {
+          emailError.innerHTML = response.data.errors.email;
+          passwordError.innerHTML = response.data.errors.password;
         } else {
           window.location = "/";
         }

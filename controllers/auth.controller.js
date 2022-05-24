@@ -34,7 +34,7 @@ module.exports.signIn = async (req, res) => {
         res.status(200).json({user: user._id});
     } catch(err) {
         const errors = signInErrors(err)
-        res.status(400).json({errors})
+        res.status(201).json({errors}) // il faut impérativement mettre 200 sinon pas de message erreur affiché
     }
 }
 
